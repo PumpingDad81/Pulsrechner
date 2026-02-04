@@ -1,1 +1,519 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ThePumpingDad – Pulsrechner</title>
+
+  <style>
+    :root{
+      --bg:#d2ecb8;
+      --ink:#255b43;
+      --ink2:#1f4c38;
+      --paper:#f7fff1;
+      --shadow: rgba(0,0,0,.16);
+      --igSize: 56px;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Helvetica Neue", Helvetica, sans-serif;
+      background: var(--bg);
+      color:var(--ink);
+    }
+    .wrap{max-width:1100px;margin:0 auto;padding:16px 12px 28px;}
+    .grid{display:grid;grid-template-columns:1fr;gap:12px;margin-top:12px;}
+    @media (min-width: 980px){ .grid{grid-template-columns:1.05fr .95fr;gap:14px;} }
+
+    .banner{
+      border:3px solid var(--ink);
+      background: rgba(247,255,241,.75);
+      border-radius:18px;
+      box-shadow: 0 10px 0 var(--ink2), 0 18px 26px var(--shadow);
+      padding:14px 16px;
+      text-align:center;
+    }
+    .brandTop{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:10px;
+    }
+    .brandLogo{
+      width: 140px;
+      height: 140px;
+      border-radius:16px;
+      border:2px solid var(--ink);
+      background: rgba(255,255,255,.85);
+      box-shadow: 0 6px 0 var(--ink2);
+      display:grid;
+      place-items:center;
+      overflow:hidden;
+    }
+    .brandLogo img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+    h1{
+      margin:0;
+      font-size:26px;
+      line-height:1.05;
+      letter-spacing:.4px;
+      text-transform:uppercase;
+      font-weight:1000;
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border:2px solid var(--ink);
+      border-radius:999px;
+      background: rgba(210,236,184,.65);
+      box-shadow: 0 6px 0 var(--ink2);
+      font-weight:1000;
+      letter-spacing:.5px;
+      text-transform:uppercase;
+      font-size:12px;
+      margin-bottom:2px;
+    }
+    .socialRow{
+      margin-top:8px;
+      display:flex;
+      justify-content:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .igLink{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:12px;
+      padding:0px 10px;
+      border:2px solid var(--ink);
+      border-radius:999px;
+      background: rgba(247,255,241,.92);
+      box-shadow: 0 5px 0 var(--ink2);
+      color:var(--ink);
+      text-decoration:none;
+      font-weight:1000;
+      letter-spacing:.6px;
+      font-size:12px;
+      text-transform:uppercase;
+      line-height:1;
+      white-space:nowrap;
+      min-height: calc(var(--igSize) + 8px);
+    }
+    .igLink:active{
+      transform: translateY(2px);
+      box-shadow: 0 3px 0 var(--ink2);
+    }
+    .igLink:hover{ filter: brightness(1.02); }
+
+    .igIconBox{
+      width: var(--igSize);
+      height: var(--igSize);
+      flex: 0 0 var(--igSize);
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .igLogo{
+      width:100%;
+      height:100%;
+      object-fit:contain;
+      display:block;
+    }
+
+    .card{
+      background: rgba(247,255,241,.82);
+      border:2px solid var(--ink);
+      border-radius:18px;
+      box-shadow: 0 10px 0 var(--ink2), 0 18px 26px var(--shadow);
+      padding:14px;
+    }
+    .card h2{
+      margin:0 0 10px;
+      font-size:15px;
+      text-transform:uppercase;
+      letter-spacing:.7px;
+      font-weight:1000;
+    }
+
+    .row{display:grid;grid-template-columns:1fr;gap:10px;}
+    @media (min-width:560px){ .row{grid-template-columns:1fr 1fr;} }
+
+    label{
+      font-size:12px;
+      font-weight:1000;
+      text-transform:uppercase;
+      letter-spacing:.6px;
+      display:block;
+      margin:0 0 6px;
+    }
+    input, select{
+      width:100%;
+      padding:12px 12px;
+      border:2px solid var(--ink);
+      border-radius:14px;
+      background: rgba(255,255,255,.94);
+      color:var(--ink);
+      font-weight:900;
+      outline:none;
+      font-size:16px;
+    }
+    input:focus, select:focus{box-shadow: 0 0 0 3px rgba(37,91,67,.18);}
+
+    .seg{display:flex;gap:8px;}
+    .seg button{
+      flex:1;
+      border:2px solid var(--ink);
+      background: rgba(255,255,255,.78);
+      color:var(--ink);
+      padding:12px;
+      border-radius:14px;
+      font-weight:1000;
+      cursor:pointer;
+      box-shadow: 0 6px 0 var(--ink2);
+      text-transform:uppercase;
+      letter-spacing:.6px;
+      font-size:12px;
+      touch-action: manipulation;
+    }
+    .seg button.active{ background: rgba(210,236,184,.95); }
+    .seg button:active{
+      transform: translateY(2px);
+      box-shadow: 0 4px 0 var(--ink2);
+    }
+
+    .subhint{
+      margin-top:6px;
+      font-size:11px;
+      font-weight:1000;
+      letter-spacing:.4px;
+      opacity:.9;
+      text-transform:none;
+    }
+
+    .warn{
+      margin-top:10px;
+      border:2px dashed var(--ink);
+      background: rgba(255,100,100,.85);
+      padding:10px;
+      border-radius:14px;
+      font-size:12px;
+      font-weight:1000;
+      color: white;
+    }
+
+    .kpiGrid{display:grid;grid-template-columns:1fr;gap:10px;}
+    @media (min-width:560px){ .kpiGrid{grid-template-columns:1fr 1fr;} }
+
+    .kpi{
+      border:2px solid var(--ink);
+      border-radius:16px;
+      padding:10px;
+      background: rgba(255,255,255,.82);
+      box-shadow: 0 6px 0 var(--ink2);
+    }
+    .kpi .lab{
+      font-size:11px;
+      font-weight:1100;
+      text-transform:uppercase;
+      letter-spacing:.8px;
+      opacity:.95;
+    }
+    .kpi .val{
+      font-size:20px;
+      font-weight:1200;
+      margin-top:2px;
+    }
+
+    table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      overflow:hidden;
+      border-radius:18px;
+      border:2px solid var(--ink);
+      background: rgba(255,255,255,.90);
+      box-shadow: 0 6px 0 var(--ink2);
+    }
+    thead th{
+      text-align:left;
+      padding:10px 10px;
+      background: rgba(210,236,184,.85);
+      border-bottom:2px solid var(--ink);
+      text-transform:uppercase;
+      letter-spacing:.7px;
+      font-weight:1100;
+      font-size:12px;
+    }
+    tbody td{
+      padding:10px 10px;
+      border-bottom:1px solid rgba(37,91,67,.18);
+      font-weight:900;
+      font-size:13px;
+      vertical-align:top;
+    }
+    tbody tr:last-child td{border-bottom:none}
+
+    .zName{
+      font-weight:1100;
+      text-transform:uppercase;
+      letter-spacing:.5px;
+    }
+    .zUse{
+      display:block;
+      margin-top:4px;
+      font-size:11px;
+      font-weight:1000;
+      opacity:.9;
+      text-transform:none;
+      letter-spacing:.2px;
+    }
+
+    .kcalSmall{
+      font-size:11px;
+      opacity:.9;
+      font-weight:1000;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="banner">
+      <div class="brandTop">
+        <div class="brandLogo">
+          <img src="pumpingdad-logo.png" alt="ThePumpingDad Logo">
+        </div>
+        <div class="badge">Pulsrechner</div>
+
+        <div class="socialRow">
+          <a class="igLink" href="https://www.instagram.com/thepumpingdad/" target="_blank" rel="noopener noreferrer">
+            <span class="igIconBox" aria-hidden="true">
+              <img class="igLogo" src="instagram-logo.png" alt="Instagram">
+            </span>
+            Instagram
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h2>Eingaben</h2>
+
+        <div class="row">
+          <div>
+            <label>Geschlecht</label>
+            <div class="seg" role="group" aria-label="Geschlecht">
+              <button id="sexM" type="button" class="active">Männlich</button>
+              <button id="sexW" type="button">Weiblich</button>
+            </div>
+            <div class="subhint">HRmax Schätzung: Männer = Tanaka, Frauen = Gulati.</div>
+          </div>
+
+          <div>
+            <label for="age">Alter (Jahre)</label>
+            <input id="age" type="number" step="1" value="35" inputmode="numeric">
+          </div>
+
+          <div>
+            <label for="height">Größe (cm)</label>
+            <input id="height" type="number" step="1" value="173" inputmode="numeric">
+          </div>
+
+          <div>
+            <label for="weight">Gewicht (kg)</label>
+            <input id="weight" type="number" step="0.1" value="72" inputmode="decimal">
+          </div>
+
+          <div style="grid-column:1/-1">
+            <label for="minutes">Trainingsdauer (Minuten)</label>
+            <input id="minutes" type="number" step="1" value="30" inputmode="numeric">
+          </div>
+        </div>
+
+        <div class="warn" id="warnBox" style="display:none"></div>
+      </div>
+
+      <div class="card">
+        <h2>Ergebnis</h2>
+
+        <div class="kpiGrid">
+          <div class="kpi">
+            <div class="lab">HRmax (geschätzt)</div>
+            <div class="val"><span id="hrmaxOut">—</span> bpm</div>
+          </div>
+          <div class="kpi">
+            <div class="lab">Kalorien (Referenz Zone 2)</div>
+            <div class="val"><span id="totalKcalOut">—</span> kcal</div>
+          </div>
+        </div>
+
+        <div style="margin-top:12px;">
+          <table aria-label="Pulszonen">
+            <thead>
+              <tr>
+                <th style="width:32%">Zone (NUTZEN)</th>
+                <th style="width:28%">Puls (bpm)</th>
+                <th style="width:18%">kcal/min</th>
+                <th style="width:22%">kcal bei Dauer</th>
+              </tr>
+            </thead>
+            <tbody id="zonesBody">
+              <tr>
+                <td class="zName">—</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="subhint" id="footText" style="margin-top:10px;">
+            Hinweis: Kalorien sind eine Schätzung (MET-Modell) und können deutlich abweichen.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Zonen (% HRmax) + Nutzen (nur Deutsch)
+    const ZONES = [
+      { name: "Zone 1", use: "Regeneration / sehr locker", pctLow: 0.50, pctHigh: 0.60, met: 4.0 },
+      { name: "Zone 2", use: "LISS / Grundlagenausdauer (aerob)", pctLow: 0.60, pctHigh: 0.70, met: 6.0 },
+      { name: "Zone 3", use: "Aerob / zügiges Tempo", pctLow: 0.70, pctHigh: 0.80, met: 8.0 },
+      { name: "Zone 4", use: "Anaerobe Schwelle / hart", pctLow: 0.80, pctHigh: 0.90, met: 10.0 },
+      { name: "Zone 5", use: "Anaerob / maximale Belastung", pctLow: 0.90, pctHigh: 1.00, met: 12.0 }
+    ];
+
+    const $ = (id) => document.getElementById(id);
+
+    const sexM = $("sexM");
+    const sexW = $("sexW");
+    let sex = "m";
+
+    const ageEl = $("age");
+    const heightEl = $("height");
+    const weightEl = $("weight");
+    const minutesEl = $("minutes");
+
+    const hrmaxOut = $("hrmaxOut");
+    const totalKcalOut = $("totalKcalOut");
+    const zonesBody = $("zonesBody");
+    const warnBox = $("warnBox");
+    const footText = $("footText");
+
+    function toNum(val){
+      const n = Number(String(val).replace(",", "."));
+      return Number.isFinite(n) ? n : NaN;
+    }
+
+    function setSex(newSex){
+      sex = newSex;
+      sexM.classList.toggle("active", sex === "m");
+      sexW.classList.toggle("active", sex === "w");
+      compute();
+    }
+
+    sexM.addEventListener("click", () => setSex("m"));
+    sexW.addEventListener("click", () => setSex("w"));
+
+    function estimateHRmax(sex, age){
+      const tanaka = 208 - 0.7 * age;
+      const gulati = 206 - 0.88 * age;
+      const hrmax = (sex === "w") ? gulati : tanaka;
+      return Math.round(hrmax);
+    }
+
+    function kcalPerMinFromMET(met, kg){
+      return (met * 3.5 * kg) / 200;
+    }
+
+    function fmt1(n){
+      return (Math.round(n * 10) / 10).toFixed(1);
+    }
+
+    function safeRoundBpm(x){
+      return Math.max(0, Math.round(x));
+    }
+
+    function showWarn(msg){
+      warnBox.style.display = "block";
+      warnBox.textContent = msg;
+    }
+    function hideWarn(){
+      warnBox.style.display = "none";
+      warnBox.textContent = "";
+    }
+
+    function buildZones(hrmax, kg, minutes){
+      zonesBody.innerHTML = "";
+
+      for(const z of ZONES){
+        const low = safeRoundBpm(hrmax * z.pctLow);
+        const high = safeRoundBpm(hrmax * z.pctHigh);
+
+        const kcalMin = kcalPerMinFromMET(z.met, kg);
+        const kcalTotal = kcalMin * minutes;
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>
+            <span class="zName">${z.name}</span>
+            <span class="zUse">${z.use}</span>
+          </td>
+          <td>${low} – ${high}</td>
+          <td>${fmt1(kcalMin)}</td>
+          <td>${fmt1(kcalTotal)} <span class="kcalSmall">(wenn komplett in ${z.name})</span></td>
+        `;
+        zonesBody.appendChild(tr);
+      }
+    }
+
+    function compute(){
+      const age = toNum(ageEl.value);
+      const kg = toNum(weightEl.value);
+      const minutes = toNum(minutesEl.value);
+
+      if(!Number.isFinite(age) || !Number.isFinite(kg) || !Number.isFinite(minutes) || age <= 0 || kg <= 0 || minutes <= 0){
+        hrmaxOut.textContent = "—";
+        totalKcalOut.textContent = "—";
+        zonesBody.innerHTML = `<tr><td class="zName">—</td><td>Bitte gültige Werte eingeben</td><td>—</td><td>—</td></tr>`;
+        showWarn("Bitte Alter, Gewicht und Trainingsdauer als Werte > 0 eingeben.");
+        return;
+      }
+      hideWarn();
+
+      const hrmax = estimateHRmax(sex, age);
+      hrmaxOut.textContent = hrmax;
+
+      buildZones(hrmax, kg, minutes);
+
+      const z2 = ZONES.find(z => z.name === "Zone 2");
+      const refTotal = kcalPerMinFromMET(z2.met, kg) * minutes;
+      totalKcalOut.textContent = fmt1(refTotal);
+
+      footText.innerHTML =
+        `Hinweis: Kalorien sind eine <b>Schätzung</b> (MET-Modell). Der „Kalorien (Referenz)“-Wert basiert auf <b>Zone 2 (LISS)</b> über ${Math.round(minutes)} Minuten.`;
+    }
+
+    [ageEl, heightEl, weightEl, minutesEl].forEach(el => {
+      el.addEventListener("input", compute);
+      el.addEventListener("change", compute);
+    });
+
+    compute();
+  </script>
+</body>
+</html>
+
 
