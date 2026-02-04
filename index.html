@@ -89,6 +89,7 @@
       flex-wrap:wrap;
     }
 
+    /* Instagram Button */
     .igLink{
       display:inline-flex;
       align-items:center;
@@ -128,6 +129,53 @@
       height:100%;
       object-fit:contain;
       display:block;
+    }
+
+    /* Startseite Button: exakt wie Instagram */
+    .homeLink{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:12px;
+      padding:0px 10px;
+
+      border:2px solid var(--ink);
+      border-radius:999px;
+      background: rgba(247,255,241,.92);
+      box-shadow: 0 5px 0 var(--ink2);
+
+      color:var(--ink);
+      text-decoration:none;
+
+      font-weight:1000;
+      letter-spacing:.6px;
+      font-size:12px;
+      text-transform:uppercase;
+      line-height:1;
+      white-space:nowrap;
+
+      min-height: calc(var(--igSize) + 8px);
+    }
+    .homeLink:active{
+      transform: translateY(2px);
+      box-shadow: 0 3px 0 var(--ink2);
+    }
+    .homeLink:hover{ filter: brightness(1.02); }
+
+    /* Icon-Box wie IG, damit exakt gleiche Höhe/Optik */
+    .homeIconBox{
+      width: var(--igSize);
+      height: var(--igSize);
+      flex: 0 0 var(--igSize);
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .homeIcon{
+      width:60%;
+      height:60%;
+      display:block;
+      color: var(--ink);
     }
 
     .card{
@@ -294,8 +342,20 @@
           <img src="pumpingdad-logo.png" alt="ThePumpingDad Logo">
         </div>
         <div class="badge">Pulsrechner</div>
+        <h1>Pulszonen & Kalorien</h1>
 
         <div class="socialRow">
+          <!-- Startseite: gleiche Maße wie Instagram -->
+          <a class="homeLink" href="https://pumpingdad.de/" rel="noopener noreferrer" title="Zurück zum Hauptbildschirm">
+            <span class="homeIconBox" aria-hidden="true">
+              <svg class="homeIcon" viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="currentColor" d="M12 3.2 2.5 11.1c-.4.3-.5.9-.2 1.3.3.4.9.5 1.3.2L5 11.5V20c0 .6.4 1 1 1h4.5v-6.5c0-.6.4-1 1-1h1c.6 0 1 .4 1 1V21H18c.6 0 1-.4 1-1v-8.5l1.4 1.1c.4.3 1 .2 1.3-.2.3-.4.2-1-.2-1.3L12 3.2z"/>
+              </svg>
+            </span>
+            Startseite
+          </a>
+
+          <!-- Instagram -->
           <a class="igLink" href="https://www.instagram.com/thepumpingdad/" target="_blank" rel="noopener noreferrer">
             <span class="igIconBox" aria-hidden="true">
               <img class="igLogo" src="instagram-logo.png" alt="Instagram">
@@ -362,7 +422,7 @@
           <table aria-label="Pulszonen">
             <thead>
               <tr>
-                <th style="width:32%">Zone (NUTZEN)</th>
+                <th style="width:32%">Zone (Nutzen)</th>
                 <th style="width:28%">Puls (bpm)</th>
                 <th style="width:18%">kcal/min</th>
                 <th style="width:22%">kcal bei Dauer</th>
@@ -386,7 +446,6 @@
   </div>
 
   <script>
-    // Zonen (% HRmax) + Nutzen (nur Deutsch)
     const ZONES = [
       { name: "Zone 1", use: "Regeneration / sehr locker", pctLow: 0.50, pctHigh: 0.60, met: 4.0 },
       { name: "Zone 2", use: "LISS / Grundlagenausdauer (aerob)", pctLow: 0.60, pctHigh: 0.70, met: 6.0 },
@@ -402,7 +461,6 @@
     let sex = "m";
 
     const ageEl = $("age");
-    const heightEl = $("height");
     const weightEl = $("weight");
     const minutesEl = $("minutes");
 
@@ -423,15 +481,13 @@
       sexW.classList.toggle("active", sex === "w");
       compute();
     }
-
     sexM.addEventListener("click", () => setSex("m"));
     sexW.addEventListener("click", () => setSex("w"));
 
     function estimateHRmax(sex, age){
       const tanaka = 208 - 0.7 * age;
       const gulati = 206 - 0.88 * age;
-      const hrmax = (sex === "w") ? gulati : tanaka;
-      return Math.round(hrmax);
+      return Math.round((sex === "w") ? gulati : tanaka);
     }
 
     function kcalPerMinFromMET(met, kg){
@@ -457,7 +513,6 @@
 
     function buildZones(hrmax, kg, minutes){
       zonesBody.innerHTML = "";
-
       for(const z of ZONES){
         const low = safeRoundBpm(hrmax * z.pctLow);
         const high = safeRoundBpm(hrmax * z.pctHigh);
@@ -506,7 +561,7 @@
         `Hinweis: Kalorien sind eine <b>Schätzung</b> (MET-Modell). Der „Kalorien (Referenz)“-Wert basiert auf <b>Zone 2 (LISS)</b> über ${Math.round(minutes)} Minuten.`;
     }
 
-    [ageEl, heightEl, weightEl, minutesEl].forEach(el => {
+    [ageEl, weightEl, minutesEl].forEach(el => {
       el.addEventListener("input", compute);
       el.addEventListener("change", compute);
     });
@@ -515,5 +570,3 @@
   </script>
 </body>
 </html>
-
-
